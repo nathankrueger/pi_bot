@@ -99,8 +99,9 @@ class motors:
 # followed by returning to idle, while conducting other tasks.  This thread handles waiting for a specified period
 # of time, then shutting the motors back off.
 class motor_off_timer(threading.Thread):
-	def __init__(self, wait_time, motors, messager):
+	def __init__(self, wait_time, callback, motors, messager):
 		self.wait_time = wait_time
+		self.callback = callback
 		self.motors = motors
 		self.cancel_event = threading.Event()
 		self.running = False
@@ -124,6 +125,8 @@ class motor_off_timer(threading.Thread):
 		time.sleep(self.wait_time)
 		if not self.cancel_event.is_set():
 			self.motors.motors_off()
+			if self.callback:
+				self.callback()
 
 		self.running = False
 
@@ -146,6 +149,11 @@ class motor_manager:
 		if self.is_running():
 			self.last_motor_thread.cancel()
 
+	def __start_timer(time_ms):
+		time_s = float(time_ms)/1000.0
+		self.last_motor_thread = motor_off_timer(time_s, self.callback, self.motors, self.messager)
+		self.last_motor_thread.start()
+
 	def motors_off(self):
 		self.motors.motors_off()
 
@@ -155,60 +163,50 @@ class motor_manager:
 	def full_forward(self, time_ms):
 		self.cancel_outstanding()
 		self.motors.full_forward()
-		self.last_motor_thread = motor_off_timer(time_s, self.motors, self.messager)
-		self.last_motor_thread.start()
+		self.__start_timer(time_ms)
 
-	def full_backward(self):
+	def full_backward(self, time_ms):
 		self.cancel_outstanding()
 		self.motors.full_backward()
-		self.last_motor_thread = motor_off_timer(time_s, self.motors, self.messager)
-		self.last_motor_thread.start()
+		self.__start_timer(time_ms)
 
-	def forward(self, percentage):
+	def forward(self, percentage, time_ms):
 		self.cancel_outstanding()
 		self.motors.forward(percentage)
-		self.last_motor_thread = motor_off_timer(time_s, self.motors, self.messager)
-		self.last_motor_thread.start()
+		self.__start_timer(time_ms)
 
-	def reverse(self, percentage):
+	def reverse(self, percentage, time_ms):
 		self.cancel_outstanding()
 		self.motors.reverse(percentage)
-		self.last_motor_thread = motor_off_timer(time_s, self.motors, self.messager)
-		self.last_motor_thread.start()
+		self.__start_timer(time_ms)
 
-	def full_cw(self):
+	def full_cw(self, time_ms):
 		self.cancel_outstanding()
 		self.motors.full_cw()
-		self.last_motor_thread = motor_off_timer(time_s, self.motors, self.messager)
-		self.last_motor_thread.start()
+		self.__start_timer(time_ms)
 
-	def full_ccw(self):
+	def full_ccw(self, time_ms):
 		self.cancel_outstanding()
 		self.motors.full_ccw()
-		self.last_motor_thread = motor_off_timer(time_s, self.motors, self.messager)
-		self.last_motor_thread.start()
+		self.__start_timer(time_ms)
 	
-	def cw(self, percentage):
+	def cw(self, percentage, time_ms):
 		self.cancel_outstanding()
 		self.motors.cw(percentage)
-		self.last_motor_thread = motor_off_timer(time_s, self.motors, self.messager)
-		self.last_motor_thread.start()
+		self.__start_timer(time_ms)
 
-	def ccw(self, percentage):
+	def ccw(self, percentage, time_ms):
 		self.cancel_outstanding()
 		self.motors.ccw(percentage)
-		self.last_motor_thread = motor_off_timer(time_s, self.motors, self.messager)
-		self.last_motor_thread.start()
+		self.__start_timer(time_ms)
 
-	def run_left_motor(self, percentage):
+	def run_left_motor(self, percentage, time_ms):
 		self.cancel_outstanding()
 		self.motors.run_left_motor(percentage)
-		self.last_motor_thread = motor_off_timer(time_s, self.motors, self.messager)
-		self.last_motor_thread.start()
+		self.__start_timer(time_ms)
 
-	def run_right_motor(self, percentage):
+	def run_right_motor(self, percentage, time_ms):
 		self.cancel_outstanding()
 		self.motors.run_right_motor(percentage)
-		self.last_motor_thread = motor_off_timer(time_s, self.motors, self.messager)
-		self.last_motor_thread.start()
+		self.__start_timer(time_ms)
 
