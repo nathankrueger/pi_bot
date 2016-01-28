@@ -145,6 +145,9 @@ class motor_manager:
 
 		return result
 
+	def set_callback(callback):
+		self.callback = callback
+
 	def cancel_outstanding(self):
 		if self.is_running():
 			self.last_motor_thread.cancel()
