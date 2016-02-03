@@ -57,12 +57,12 @@ class motors:
 		self.run_right_motor(percentage*-1)
 
 	def full_cw(self):
-		self.run_left_motor(100)
-		self.run_right_motor(-100)
-
-	def full_ccw(self):
 		self.run_left_motor(-100)
 		self.run_right_motor(100)
+
+	def full_ccw(self):
+		self.run_left_motor(100)
+		self.run_right_motor(-100)
 	
 	def cw(self, percentage):
 		self.run_left_motor(percentage*-1)
