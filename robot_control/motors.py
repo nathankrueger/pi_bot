@@ -132,11 +132,14 @@ class motor_off_timer(threading.Thread):
 
 # The top-level class that will likely be used by the pi_bot's main()
 class motor_manager:
-	def __init__(self, motors, messager, callback=None):
+	def __init__(self, messager, callback=None):
 		self.motors = motors(I2C_ADDRESS)
 		self.messager = messager
 		self.last_motor_thread = None
 		self.callback = callback
+
+	def get_motors(self):
+		return self.motors
 
 	def is_running(self):
 		result = False
