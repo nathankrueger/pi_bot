@@ -15,7 +15,7 @@ import curses
 # pi_bot libraries
 import motors
 import server
-import sensors
+import sensor
 import commands
 import message
 
@@ -42,7 +42,7 @@ def interactive(stdscr):
 			if c == UP_KEY:
 				motor_man.get_motors().full_forward()
 			elif c == DOWN_KEY:
-				motor_man.get_motors().full_reverse()
+				motor_man.get_motors().full_backward()
 			elif c == LEFT_KEY:
 				motor_man.get_motors().full_ccw()
 			elif c == RIGHT_KEY:

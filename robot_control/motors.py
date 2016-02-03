@@ -25,15 +25,15 @@ class motors:
 		atexit.register(self.cleanup_motors)
 
 	def get_right_motor(self):
-		return self.mh.getmotor(RIGHT_MOTOR_NUM)
+		return self.mh.getMotor(RIGHT_MOTOR_NUM)
 
 	def get_left_motor(self):
-		return self.mh.getmotor(LEFT_MOTOR_NUM)
+		return self.mh.getMotor(LEFT_MOTOR_NUM)
 
 	# Ensure the motors stop running at program exit
 	def cleanup_motors(self):
-		self.get_left_motor().run(af_mh.RELEASE)
-		self.get_right_motor().run(af_mh.RELEASE)
+		self.get_left_motor().run(hat.RELEASE)
+		self.get_right_motor().run(hat.RELEASE)
 
 	# Set the motor speed to 0
 	def motors_off(self):
@@ -52,7 +52,7 @@ class motors:
 		self.run_left_motor(percentage)
 		self.run_right_motor(percentage)
 
-	def reverse(self, percentage):
+	def backward(self, percentage):
 		self.run_left_motor(percentage*-1)
 		self.run_right_motor(percentage*-1)
 
@@ -79,9 +79,9 @@ class motors:
 		lm.setSpeed(run_speed)
 
 		if percentage > 0:
-			lm.run(af_mh.FORWARD)
+			lm.run(hat.FORWARD)
 		else:
-			lm.run(af_mh.BACKWARD)
+			lm.run(hat.BACKWARD)
 
 	def run_right_motor(self, percentage):
 		# Scale 100 to 255
@@ -90,9 +90,9 @@ class motors:
 		rm.setSpeed(run_speed)
 
 		if percentage > 0:
-			rm.run(af_mh.FORWARD)
+			rm.run(hat.FORWARD)
 		else:
-			rm.run(af_mh.BACKWARD)
+			rm.run(hat.BACKWARD)
 
 # Since motor movement is initiated by one-time I2C calls to the motor hat, there is no need to add the call to
 # initiate the PWM to a seperate thread.  There is a need to request motor movement for a given period of time,
@@ -181,9 +181,9 @@ class motor_manager:
 		self.motors.forward(percentage)
 		self.__start_timer(time_ms)
 
-	def reverse(self, percentage, time_ms):
+	def backward(self, percentage, time_ms):
 		self.cancel_outstanding()
-		self.motors.reverse(percentage)
+		self.motors.backward(percentage)
 		self.__start_timer(time_ms)
 
 	def full_cw(self, time_ms):
