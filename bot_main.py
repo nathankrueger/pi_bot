@@ -10,6 +10,7 @@ sys.path.append('./sensor')
 
 import time
 import argparse
+import curses
 
 # pi_bot libraries
 import motors
@@ -19,6 +20,8 @@ import commands
 import message
 
 DEFAULT_PORT=101112
+messager = message.print_messager()
+motor_man = motors.motor_manager(messager)
 
 def getArgs():
 	# Grab command-line arguments
@@ -28,20 +31,39 @@ def getArgs():
 
 	return parser.parse_args()
 
-def interactive():
-	pass
+def interactive(stdscr):
+	UP_KEY = 259
+	DOWN_KEY = 258
+	LEFT_KEY = 260
+	RIGHT_KEY = 261
+	try:
+		while True:
+			c = stdscr.getch()
+			if c == UP_KEY:
+				motor_man.get_motors().full_forward()
+			elif c == DOWN_KEY:
+				motor_man.get_motors().full_reverse()
+			elif c == LEFT_KEY:
+				motor_man.get_motors().full_ccw()
+			elif c == RIGHT_KEY:
+				motor_man.get_motors().full_cw()
+			else:
+				motor_man.motors_off()
 
-def main():
+	except KeyboardInterrupt:
+		pass
+
+def main(stdscr):
 	args = getArgs()
 	server_port = DEFAULT_PORT
+
+	print "Pi-Robot main!"
 
 	if args.port:
 		server_port = args.port
 
 	if args.interactive:
-		interactive()
-
-	print "Pi-Robot main!"
+		interactive(stdscr)
 
 if __name__ == '__main__':
-	main()
+	curses.wrapper(main)
