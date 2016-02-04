@@ -37,24 +37,19 @@ class motors:
 
 	# Set the motor speed to 0
 	def motors_off(self):
-		self.run_left_motor(0)
-		self.run_right_motor(0)
+		self.run_motors(0,0)
 
 	def full_forward(self):
-		self.run_left_motor(100)
-		self.run_right_motor(100)
-	
+		self.forward(100)
+
 	def full_backward(self):
-		self.run_left_motor(-100)
-		self.run_right_motor(-100)
+		self.backward(-100)
 
 	def forward(self, percentage):
-		self.run_left_motor(percentage)
-		self.run_right_motor(percentage)
+		self.run_motors(percentage, percentage)
 
 	def backward(self, percentage):
-		self.run_left_motor(percentage*-1)
-		self.run_right_motor(percentage*-1)
+		self.run_motors(percentage*-1, percentage*-1)
 
 	def full_cw(self):
 		self.run_left_motor(-100)
@@ -72,27 +67,42 @@ class motors:
 		self.run_left_motor(percentage)
 		self.run_right_motor(percentage*-1)
 
-	def run_left_motor(self, percentage):
-		# Scale 100 to 255
-		run_speed = int(abs(percentage)*(MAX_SPEED/100.0))
-		lm = self.get_left_motor()
-		lm.setSpeed(run_speed)
+	def turn_cw(self, percentage_turn, percentage_speed):
+		left_percentage = int((percentage_speed/100.0)*(100.0-percentage_turn))
+		right_percentage = int((percentage_speed/100.0)*(percentage_turn))
+		self.run_motors(left_percentage, right_percentage)
 
-		if percentage > 0:
+	def turn_ccw(self, percentage_turn, percentage_speed):
+		left_percentage = int((percentage_speed/100.0)*(percentage_turn))
+		right_percentage = int((percentage_speed/100.0)*(100.0-percentage_turn))
+		self.run_motors(left_percentage, right_percentage)
+
+	def run_motors(self, left_percentage, right_percentage):
+		# Scale 100 to 255
+		l_run_speed = int(abs(left_percentage)*(MAX_SPEED/100.0))
+		r_run_speed = int(abs(right_percentage)*(MAX_SPEED/100.0))
+		lm = self.get_left_motor()
+		lm = self.get_right_motor()
+		lm.setSpeed(l_run_speed)
+		rm.setSpeed(r_run_speed)
+
+		# Run the left motor
+		if left_percentage > 0:
 			lm.run(hat.FORWARD)
 		else:
 			lm.run(hat.BACKWARD)
-
-	def run_right_motor(self, percentage):
-		# Scale 100 to 255
-		run_speed = int(abs(percentage)*(MAX_SPEED/100.0))
-		rm = self.get_right_motor()
-		rm.setSpeed(run_speed)
-
-		if percentage > 0:
+		
+		# Run the right motor
+		if right_percentage > 0:
 			rm.run(hat.FORWARD)
 		else:
 			rm.run(hat.BACKWARD)
+		
+	def run_left_motor(self, percentage):
+		self.run_motors(percentage, 0)
+
+	def run_right_motor(self, percentage):
+		self.run_motors(0, percentage)
 
 # Since motor movement is initiated by one-time I2C calls to the motor hat, there is no need to add the call to
 # initiate the PWM to a seperate thread.  There is a need to request motor movement for a given period of time,
@@ -205,6 +215,16 @@ class motor_manager:
 		self.cancel_outstanding()
 		self.motors.ccw(percentage)
 		self.__start_timer(time_ms)
+
+	def turn_cw(self, percentage_turn, percentage_speedi, time_ms):
+		self.cancel_outstanding()
+		self.motors.turn_cw(percentage_turn, percentage_speed)
+
+	def turn_ccw(self, percentage_turn, percentage_speed, time_ms):
+		self.cancel_outstanding()
+		self.run_left_motor((percentage_speed/100)*(percentage_turn))
+		self.run_right_motor((percentage_speed/100)*(100-percentage_turn))
+
 
 	def run_left_motor(self, percentage, time_ms):
 		self.cancel_outstanding()
