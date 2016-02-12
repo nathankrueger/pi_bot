@@ -1,4 +1,7 @@
 # This file contains a messager 'interface' which can be used to create multiple implementations of debug, info, warning, and error messages
+import sys
+import os
+INSTALL_DIR = os.path.dirname(os.path.realpath(sys.argv[0])) + '/../'
 
 import datetime
 

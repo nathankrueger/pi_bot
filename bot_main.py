@@ -3,10 +3,12 @@
 # This file will contain the top-level code to run on the Raspberry Pi powered robot
 
 import sys
-sys.path.append('./socket')
-sys.path.append('./common')
-sys.path.append('./robot_control')
-sys.path.append('./sensor')
+import os
+INSTALL_DIR = os.path.dirname(os.path.realpath(sys.argv[0]))
+sys.path.append('{0}/socket'.format(INSTALL_DIR))
+sys.path.append('{0}/common'.format(INSTALL_DIR))
+sys.path.append('{0}/robot_control'.format(INSTALL_DIR))
+sys.path.append('{0}/sensor'.format(INSTALL_DIR))
 
 import time
 import argparse
