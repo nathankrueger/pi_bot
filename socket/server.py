@@ -32,7 +32,7 @@ class bot_server(threading.Thread):
 			self.messager.info("Accepted client socket connection: {0}".format(addr))
 			self.client_socket = conn
 			self.client_socket.setttimeout(1)
-		except socket.error as err_msg:
+		except socket.error, err_msg:
 			self.messager.error("Failed to accept connection: {0}".format(err_msg))
 			self.client_socket = None
 	
@@ -60,7 +60,7 @@ class bot_server(threading.Thread):
 				err = e.args[0]
 				if not (err == 'timed out'):
 					err_msg = err
-			except: socket.error as err:
+			except socket.error as err:
 				err_msg = err
 			
 		if not err_msg is None:
@@ -92,7 +92,7 @@ class bot_server(threading.Thread):
 		if self.has_connection():
 			try:
 				self.client_socket.send(data)
-			except socket.error as err_msg:
+			except socket.error, err_msg:
 				self.messager.error("Failed to send data to client socket: {0}".format(err_msg))
 
 	def disconnect_client(self):
@@ -101,7 +101,7 @@ class bot_server(threading.Thread):
 				self.client_socket.close()
 				self.client_socket = None
 				self.messager.info("Closing connection to client socket")
-			except socket.error as err_msg:
+			except socket.error, err_msg:
 				self.client_socket = None
 				self.messager.error("Failed to close client socket")
 
@@ -111,7 +111,7 @@ class bot_server(threading.Thread):
 				self.server_socket.close()
 				self.server_socket = None
 				self.messager.info("Closing connection to server socket")
-			except socket.error as err_msg:
+			except socket.error, err_msg:
 				self.server_socket = None
 				self.messager.error("Failed to close server socket")	
 
