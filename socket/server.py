@@ -14,6 +14,7 @@ import message
 
 class bot_server(threading.Thread):
 	def __init__(self, messager, port, max_recv_bytes=1024, rest_period=0.01):
+		super(bot_server, self).__init__()
 		self.port = port
 		self.MAX_RECV_BYTES = max_recv_bytes
 		self.REST_PERIOD = rest_period
@@ -42,6 +43,7 @@ class bot_server(threading.Thread):
 		try:
 			self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 			self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+			self.server_socket.setblocking(0)
 			self.server_socket.bind((self.hostname, self.port))
 			self.messager.info("Successfully bound server socket to port: {0}".format(self.port))
 		except Exception as err:
@@ -70,11 +72,13 @@ class bot_server(threading.Thread):
 		return read_data
 
 	def __reset(self):
+		self.messager.info("Reseting server...")
 		self.disconnect_client()
 		self.disconnect_server()
 		self.server_socket = None
 		self.client_socket = None
-		self.recv_q.clear()
+		with self.recv_q.mutex:
+			self.recv_q.queue.clear()
 		self.stopped.clear()
 
 	def has_connection(self):

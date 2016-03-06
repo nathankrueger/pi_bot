@@ -30,17 +30,18 @@ def interactive_local(stdscr):
 	DOWN_KEY = 258
 	LEFT_KEY = 260
 	RIGHT_KEY = 261
+	SPEED = 50
 	try:
 		while True:
 			c = stdscr.getch()
 			if c == UP_KEY:
-				motor_man.get_motors().full_forward()
+				motor_man.get_motors().forward(SPEED)
 			elif c == DOWN_KEY:
-				motor_man.get_motors().full_backward()
+				motor_man.get_motors().backward(SPEED)
 			elif c == LEFT_KEY:
-				motor_man.get_motors().full_ccw()
+				motor_man.get_motors().ccw(SPEED)
 			elif c == RIGHT_KEY:
-				motor_man.get_motors().full_cw()
+				motor_man.get_motors().cw(SPEED)
 			else:
 				motor_man.motors_off()
 
