@@ -54,13 +54,17 @@ class sensor(threading.Thread):
 		self.running = False
 
 	# To be overriden
-	def acquire(self):
-		self.messager.info("Sensor: {0} is acquiring a new value")
-
-	# To be overriden
 	def init(self):
 		self.messager.info("Initializing sensor: {0}".format(self.name))
-		
+
+	# To be overriden
+	def acquire(self):
+		self.messager.info("Sensor: {0} is acquiring a new value".format(self.name))
+
+	# To be overriden
+	def release(self): 
+		self.messager.info(" Releasing sensor: {0}".format(self.name))
+
 	def getValue(self):
 		return self.value
 	
