@@ -54,7 +54,7 @@ class sensor(threading.Thread):
 		self.running = False
 
 	# To be overriden
-	def init(self):
+	def initialize(self):
 		self.messager.info("Initializing sensor: {0}".format(self.name))
 
 	# To be overriden

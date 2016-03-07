@@ -9,7 +9,7 @@ import sonar_sensor
 def main():
 	msgr = message.print_messager()
 	ss = sonar_sensor.sonar_sensor('/dev/ttyAMA0', 'test sonar sensor', .01, msgr)
-	ss.init()
+	ss.initialize()
 	ss.start()
 
 	try:
