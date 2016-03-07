@@ -3,6 +3,7 @@ sys.path.append('../sensor/')
 sys.path.append('../common/')
 
 import time
+import message
 import sonar_sensor
 
 def main():
@@ -12,6 +13,7 @@ def main():
 	ss.start()
 
 	try:
+		print ss
 		while True:
 			print ss.value
 			time.sleep(.1)
