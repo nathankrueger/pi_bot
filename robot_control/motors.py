@@ -1,6 +1,8 @@
 # This file will contain the implementation of the motor control logic
 import sys
-sys.path.append('../common')
+import os
+INSTALL_DIR = os.path.dirname(os.path.realpath(sys.argv[0])) + '/../'
+sys.path.append('{0}/common'.format(INSTALL_DIR))
 
 import threading
 import time
@@ -43,7 +45,7 @@ class motors:
 		self.forward(100)
 
 	def full_backward(self):
-		self.backward(-100)
+		self.backward(100)
 
 	def forward(self, percentage):
 		self.run_motors(percentage, percentage)
@@ -52,12 +54,10 @@ class motors:
 		self.run_motors(percentage*-1, percentage*-1)
 
 	def full_cw(self):
-		self.run_left_motor(-100)
-		self.run_right_motor(100)
+		self.run_motors(-100, 100)
 
 	def full_ccw(self):
-		self.run_left_motor(100)
-		self.run_right_motor(-100)
+		self.run_motors(100, -100)
 	
 	def cw(self, percentage):
 		self.run_left_motor(percentage*-1)
@@ -82,7 +82,7 @@ class motors:
 		l_run_speed = int(abs(left_percentage)*(MAX_SPEED/100.0))
 		r_run_speed = int(abs(right_percentage)*(MAX_SPEED/100.0))
 		lm = self.get_left_motor()
-		lm = self.get_right_motor()
+		rm = self.get_right_motor()
 		lm.setSpeed(l_run_speed)
 		rm.setSpeed(r_run_speed)
 
